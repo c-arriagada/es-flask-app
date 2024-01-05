@@ -30,18 +30,17 @@ def create_event(eventObj):
     cur.close()
     return newEvent
     
-def update_event(eventObj):
+def update_event(eventObj, eventId):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    id, start_date, start_time, venue, address= eventObj.values()
-    cur.execute('UPDATE events SET start_date=%s, start_time=%s, venue=%s, address=%s WHERE id=%s RETURNING *',
-                (start_date,
-                 start_time,
-                 venue,
-                 address,
-                 id,
-                 ))
+    # query
+    listOfStrings = [f'{key}' + '=' + '%s' for key in eventObj.keys()]
+    data = ', '.join(listOfStrings)
+    sqlQuery = 'UPDATE events SET {input} WHERE id=%s RETURNING *'.format(input=data)
+    # values
+    listOfValues = [val for val in eventObj.values()]
+    listOfValues.append(eventId)
+    cur.execute(sqlQuery,tuple(listOfValues))
     updatedEvent = cur.fetchone()
-    print('updatedEvent', updatedEvent)
     db.conn.commit()
     cur.close()
     return updatedEvent

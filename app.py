@@ -1,7 +1,10 @@
 from flask import Flask
+from flask import request
+from flask_cors import CORS
 import events
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def home():
@@ -18,24 +21,29 @@ def getEvent(id):
 
 @app.route("/events", methods=['POST'])
 def addEvent():
-    event1 = {
-        'start_date': '2024-01-13',
-        'start_time': '2024-01-13T19:00:00Z',
-        'venue': 'Great2 venue',
-        'address': '2222 Great Street'
-        }
-    return events.create_event(event1)
+    # event1 = {
+    #     'start_date': '2024-01-13',
+    #     'start_time': '2024-01-13T19:00:00Z',
+    #     'venue': 'Great2 venue',
+    #     'address': '2222 Great Street'
+    #     }
+    newEvent = request.json
+    print('newEvent', newEvent)
+    return events.create_event(newEvent)
 
 @app.route("/events", methods=['PATCH'])
 def updateEvent():
-    event2 = {
-        'id': 11,
-        'start_date': '2024-01-13',
-        'start_time': '2024-01-13T19:00:00Z',
-        'venue': 'Great venue 3',
-        'address': '3333 Great Street'
-        }
-    return events.update_event(event2)
+    # event2 = {
+    #     'id': 11,
+    #     'start_date': '2024-01-13',
+    #     'start_time': '2024-01-13T19:00:00Z',
+    #     'venue': 'Great venue 3',
+    #     'address': '3333 Great Street'
+    #     }
+    event = request.json
+    eventId = event["id"]
+    del event["id"]
+    return events.update_event(event, eventId)
 
 @app.route("/events/<id>", methods=['DELETE'])
 def deleteEvent(id):
