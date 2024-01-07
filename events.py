@@ -59,4 +59,18 @@ def get_events():
     cur.execute('SELECT * FROM events')
     allEvents = cur.fetchall()
     cur.close()
-    return allEvents
+    parsedEvents = [transformData(event) for event in allEvents]
+    return parsedEvents
+
+def transformData(obj):
+    newObj = {
+                'id':         obj['id'], 
+                'title':      obj['title'],
+                'start':      (obj['start_date']).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                'startTime':  (obj['start_time']).strftime("%Y-%m-%dT%H:%M:%SZ"),
+                'extendedProps': {
+                    'venue':      obj['venue'],
+                    'address':    obj['address']
+              }}
+
+    return newObj

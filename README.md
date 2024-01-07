@@ -12,3 +12,11 @@ Use Postman for testing http requests. Go to Estilo Calico collection and choose
 
 Could've chosen curl as well. 
 
+# Date parsing
+```python
+from dateutil.parser import *
+x = parse("Fri, 05 Jan 2024 18:00:00 GMT")
+x.strftime("%Y-%m-%dT%H:%M:%SZ")
+# -> '2024-01-05T18:00:00Z'
+```
+When you query using SELECT * FROM events to retrieve events in db psycopg2 returns a datetime object for start_time and start_date when data type for that column is set to timestamp. Didn't need to use dateutil to parse but did use datetime's strftime method to parse datetime object to iso-8601 format.
