@@ -1,0 +1,15 @@
+#!/bin/bash
+
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+echo "$SCRIPT_DIR"
+# p="$1" # First argument "archive prefix directory name"
+# d="$2" # Second argument "source directory name"
+# z="$3" # Third argument "result ZIP archive name without .zip"
+# [ -e "$p" -o -e "${z}.zip" ] && return "Prefix directory name: $p Or target zip file name: ${z}.zip exist in PWD, cannot continue"
+tmp="$(mktemp)" 
+echo "temporary folder: $tmp"
+gtar cf "$tmp" -C "$SCRIPT_DIR/../.venv/lib/python3.11/site-packages" --transform "s|^|python/|" "."
+gtar xf "$tmp"
+zip -rq "../estilo-calico-deps-layer.zip" "python"
+rm "$tmp"
+rm -r "python"

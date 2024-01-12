@@ -14,21 +14,22 @@ def get_event(id):
 
 def create_event(eventObj):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    start_date, start_time, venue, address= eventObj.values()
-    cur.execute('INSERT INTO events (start_date, start_time, venue, address)'
-                'VALUES (%s, %s, %s, %s)'
+    title, start_date, start_time, venue, address= eventObj.values()
+    cur.execute('INSERT INTO events (title, start_date, start_time, venue, address)'
+                'VALUES (%s, %s, %s, %s, %s)'
                 'RETURNING *',
-                (start_date,
+                (title,
+                 start_date,
                  start_time,
                  venue,
                  address,
                  ))
     # return same event I just created from db 'RETURNING *'
     newEvent = cur.fetchone()
-    print(newEvent)
     db.conn.commit()
     cur.close()
-    return newEvent
+    parsedEvent = transformData(newEvent)
+    return parsedEvent
     
 def update_event(eventObj, eventId):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -41,9 +42,9 @@ def update_event(eventObj, eventId):
     listOfValues.append(eventId)
     cur.execute(sqlQuery,tuple(listOfValues))
     updatedEvent = cur.fetchone()
-    db.conn.commit()
     cur.close()
-    return updatedEvent
+    parsedEvent = transformData(updatedEvent)
+    return parsedEvent
 
 def delete_event(id):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -57,6 +58,7 @@ def delete_event(id):
 def get_events():
     cur = db.conn.cursor(cursor_factory = psycopg2.extras.RealDictCursor)
     cur.execute('SELECT * FROM events')
+    # the method fetchall() returns an array of dictionaries when the property cursor_fatory=psycopg2.extras.RealDictCursor is added
     allEvents = cur.fetchall()
     cur.close()
     parsedEvents = [transformData(event) for event in allEvents]

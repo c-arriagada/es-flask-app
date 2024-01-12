@@ -31,8 +31,8 @@ def addEvent():
     print('newEvent', newEvent)
     return events.create_event(newEvent)
 
-@app.route("/events", methods=['PATCH'])
-def updateEvent():
+@app.route("/events/<id>", methods=['PATCH'])
+def updateEvent(id):
     # event2 = {
     #     'id': 11,
     #     'start_date': '2024-01-13',
@@ -40,10 +40,10 @@ def updateEvent():
     #     'venue': 'Great venue 3',
     #     'address': '3333 Great Street'
     #     }
-    event = request.json
-    eventId = event["id"]
-    del event["id"]
-    return events.update_event(event, eventId)
+    event = request.json # request.json gives me access to the body in the http request
+    if event.get("id"): # defensive programming to prevent someone from modifying an events id
+        del event["id"]
+    return events.update_event(event, id)
 
 @app.route("/events/<id>", methods=['DELETE'])
 def deleteEvent(id):
