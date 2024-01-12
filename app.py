@@ -1,3 +1,4 @@
+import awsgi
 from flask import Flask
 from flask import request
 from flask_cors import CORS
@@ -55,3 +56,5 @@ def deleteEvent(id):
     else:
         return "Not found", 404
 
+def lambda_handler(event, context):
+    return awsgi.response(app, event, context)
