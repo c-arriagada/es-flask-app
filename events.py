@@ -33,7 +33,7 @@ def create_event(eventObj):
     
 def update_event(eventObj, eventId):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    # query
+    # create query
     listOfStrings = [f'{key}' + '=' + '%s' for key in eventObj.keys()]
     data = ', '.join(listOfStrings)
     sqlQuery = 'UPDATE events SET {input} WHERE id=%s RETURNING *'.format(input=data)
@@ -42,6 +42,7 @@ def update_event(eventObj, eventId):
     listOfValues.append(eventId)
     cur.execute(sqlQuery,tuple(listOfValues))
     updatedEvent = cur.fetchone()
+    db.conn.commit()
     cur.close()
     parsedEvent = transformData(updatedEvent)
     return parsedEvent

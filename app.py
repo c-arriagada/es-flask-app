@@ -3,6 +3,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 import events
+import bios
 
 app = Flask(__name__)
 CORS(app)
@@ -50,6 +51,36 @@ def updateEvent(id):
 def deleteEvent(id):
     print(f"Received delete http request for id={id}")
     result = events.delete_event(id)
+    print(f"Deleted {result} rows")
+    if result == 1:
+        return "Success", 204
+    else:
+        return "Not found", 404
+    
+@app.route("/bios", methods=['GET'])
+def getBios():
+    return bios.get_bios()
+
+@app.route("/bios/<id>", methods=['GET'])
+def getBio(id):
+    return bios.get_bio(id)
+
+@app.route("/bios/<id>", methods=['POST'])
+def createBio():
+    newBio = request.json
+    return bios.create_bio(newBio)
+
+@app.route("/bios/<id>", methods=['PATCH'])
+def updateBio(id):
+    bio = request.json
+    if bio.get("id"): # defensive programming to prevent someone from modifying an events id
+        del bio["id"]
+    return bios.update_bio(bio, id)
+
+@app.route("/bios/<id>", methods=['DELETE'])
+def deleteBio(id):
+    print(f"Received delete http request for id={id}")
+    result = bios.delete_bio(id)
     print(f"Deleted {result} rows")
     if result == 1:
         return "Success", 204

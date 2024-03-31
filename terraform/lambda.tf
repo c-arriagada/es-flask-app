@@ -47,11 +47,19 @@ resource "aws_lambda_function" "estilo_calico_lambda" {
   runtime = "python3.9"
 
   layers = [aws_lambda_layer_version.deps-layer.arn]
-#   environment {
-#     variables = {
-#       foo = "bar"
-#     }
-#   }
+
+  environment {
+    variables = {
+      DB_URI ="postgres://dygltzkk:xqtNJSqVix9ds-0kv97UYDo-5Iif9CsH@hansken.db.elephantsql.com/dygltzkk"
+      DB_USER=jsondecode(data.aws_secretsmanager_secret_version.secret-version.secret_string)["DB_USER"]
+      DB_PASSWORD=jsondecode(data.aws_secretsmanager_secret_version.secret-version.secret_string)["DB_PASSWORD"]
+      DB_HOST="hansken.db.elephantsql.com"
+      DB_PORT="5432"
+    }
+  }
+  lifecycle {
+    ignore_changes = [ source_code_hash ]
+  }
 }
 
 resource "aws_lambda_layer_version" "deps-layer" {
@@ -60,3 +68,15 @@ resource "aws_lambda_layer_version" "deps-layer" {
     source_code_hash    = "${filebase64sha256("../estilo-calico-deps-layer.zip")}"
     compatible_runtimes = ["python3.9"]
 }
+
+resource "aws_secretsmanager_secret" "estilo_calico_admin" {
+  name = "estilo_calico_admin"
+}
+
+data "aws_secretsmanager_secret_version" "secret-version" {
+  secret_id = aws_secretsmanager_secret.estilo_calico_admin.id
+}
+
+
+
+ 
