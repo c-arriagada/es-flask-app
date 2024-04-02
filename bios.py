@@ -18,14 +18,17 @@ def get_bio(id):
 
 def create_bio(bioObj):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    first_name, last_name, bio, bioImg = bioObj.values()
-    cur.execute('INSERT INTO bios (first_name,last_name, bio, bio_img)'
-                'VALUES (%s, %s, %s, %s)'
+    first_name, last_name, bio = bioObj.values() # add bio_img 
+    cur.execute('INSERT INTO bios (first_name,last_name, bio)' 
+                'VALUES (%s, %s, %s)'
+                'RETURNING *', 
                 (first_name,
-                 last_name,
+                last_name,
                 bio,
-                bioImg
                 ))
+    # This was blowing up with an exception: "psycopg2.ProgrammingError: no results to fetch"
+    # because I didn't have a 'RETURNING *' statement - so the db insert didn't
+    # actually return any results you could fetch
     newBio = cur.fetchone()
     db.conn.commit()
     cur.close()

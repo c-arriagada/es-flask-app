@@ -24,7 +24,7 @@ cur.execute('CREATE TABLE IF NOT EXISTS bios (id serial PRIMARY KEY,'
                                         'first_name varchar NOT NULL,'
                                         'last_name varchar NOT NULL,'
                                         'bio varchar NOT NULL,'
-                                        'bio_img bytea NOT NULL;'
+                                        'bio_img bytea);'
                                         )
 
 db.conn.commit()

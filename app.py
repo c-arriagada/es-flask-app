@@ -65,7 +65,7 @@ def getBios():
 def getBio(id):
     return bios.get_bio(id)
 
-@app.route("/bios/<id>", methods=['POST'])
+@app.route("/bios", methods=['POST'])
 def createBio():
     newBio = request.json
     return bios.create_bio(newBio)
