@@ -68,12 +68,8 @@ def getBio(id):
 @app.route("/bios", methods=['POST'])
 def createBio():
     newBio = request.json
-    sanitized = {
-    "first_name": newBio["first_name"],
-    "last_name": newBio["last_name"],
-    "bio": newBio["bio"],
-    }
-    return bios.create_bio(sanitized)
+    result = bios.create_bio(newBio)
+    return result
 
 @app.route("/bios/<id>", methods=['PATCH'])
 def updateBio(id):
