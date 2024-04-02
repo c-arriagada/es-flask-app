@@ -52,7 +52,7 @@ def update_bio(bioObj, id):
 
 def delete_bio(id):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cur.execute('DELETE FROM events WHERE id=%s', (id,))
+    cur.execute('DELETE FROM bios WHERE id=%s', (id,))
     rows_deleted = cur.rowcount
     db.conn.commit()
     cur.close()
