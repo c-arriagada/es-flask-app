@@ -14,6 +14,7 @@ def get_bio(id):
     cur.execute('SELECT * FROM bios WHERE id=%s', (id,))
     # fetchone returns a tuple but with cursor_factory=psycopg2.extras.RealDictCursor it returns a dictionary
     bio = cur.fetchone()
+    cur.close()
     return bio
 
 def create_bio(bioObj):
