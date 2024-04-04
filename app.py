@@ -74,7 +74,7 @@ def createBio():
 @app.route("/bios/<id>", methods=['PATCH'])
 def updateBio(id):
     bio = request.json
-    if bio.get("id"): # defensive programming to prevent someone from modifying an events id
+    if bio.get("id"): 
         del bio["id"]
     return bios.update_bio(bio, id)
 
