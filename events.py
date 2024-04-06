@@ -13,25 +13,27 @@ def get_event(id):
     return getEvent
 
 def create_event(eventObj):
+    print('Attempting to create new event', eventObj)
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    title, start_date, start_time, venue, address= eventObj.values()
     cur.execute('INSERT INTO events (title, start_date, start_time, venue, address)'
                 'VALUES (%s, %s, %s, %s, %s)'
                 'RETURNING *',
-                (title,
-                 start_date,
-                 start_time,
-                 venue,
-                 address,
+                (eventObj["title"],
+                 eventObj["start_date"],
+                 eventObj["start_time"],
+                 eventObj["venue"],
+                 eventObj["address"],
                  ))
     # return same event I just created from db 'RETURNING *'
     newEvent = cur.fetchone()
     db.conn.commit()
     cur.close()
     parsedEvent = transformData(newEvent)
+    print('Created new event', parsedEvent)
     return parsedEvent
     
 def update_event(eventObj, eventId):
+    print('Attempting to update event', eventObj)
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     # create query
     listOfStrings = [f'{key}' + '=' + '%s' for key in eventObj.keys()]
@@ -45,14 +47,17 @@ def update_event(eventObj, eventId):
     db.conn.commit()
     cur.close()
     parsedEvent = transformData(updatedEvent)
+    print('Successfully updated event', parsedEvent)
     return parsedEvent
 
 def delete_event(id):
+    print('Attempting to delete event with id', id)
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cur.execute('DELETE FROM events WHERE id=%s', (id,))
     rows_deleted = cur.rowcount
     db.conn.commit()
     cur.close()
+    print('Number of rows deleted', rows_deleted)
     return rows_deleted
 
 

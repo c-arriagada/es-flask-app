@@ -30,7 +30,6 @@ def addEvent():
     #     'address': '2222 Great Street'
     #     }
     newEvent = request.json
-    print('newEvent', newEvent)
     return events.create_event(newEvent)
 
 @app.route("/events/<id>", methods=['PATCH'])
@@ -49,9 +48,7 @@ def updateEvent(id):
 
 @app.route("/events/<id>", methods=['DELETE'])
 def deleteEvent(id):
-    print(f"Received delete http request for id={id}")
     result = events.delete_event(id)
-    print(f"Deleted {result} rows")
     if result == 1:
         return "Success", 204
     else:
