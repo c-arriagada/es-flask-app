@@ -44,7 +44,7 @@ def update_videos(videoObj, id):
     return updatedBio
 
 
-def delete_video(id):
+def delete_videos(id):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cur.execute('DELETE FROM videos WHERE id=%s', (id,))
     rows_deleted = cur.rowcount

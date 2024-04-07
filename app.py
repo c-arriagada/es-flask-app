@@ -107,15 +107,15 @@ def updateVideo(id):
         del video["id"]
     return videos.update_videos(video, id)
 
-# @app.route("/route/<id>", methods=['DELETE'])
-# def deleteVideo(id):
-#     print(f"Received delete http request for id={id}")
-#     result = videos.delete_bio(id)
-#     print(f"Deleted {result} rows")
-#     if result == 1:
-#         return "Success", 204
-#     else:
-#         return "Not found", 404
+@app.route("/videos/<id>", methods=['DELETE'])
+def deleteVideo(id):
+    print(f"Received delete http request for id={id}")
+    result = videos.delete_videos(id)
+    print(f"Deleted {result} rows")
+    if result == 1:
+        return "Success", 204
+    else:
+        return "Not found", 404
 
 def lambda_handler(event, context):
     return awsgi.response(app, event, context)
