@@ -100,6 +100,13 @@ def createVideo():
     result = videos.create_videos(file, metadata)
     return result
 
+@app.route("/videos/<id>", methods=['PATCH'])
+def updateVideo(id):
+    video = request.json
+    if video.get("id"): 
+        del video["id"]
+    return videos.update_videos(video, id)
+
 # @app.route("/route/<id>", methods=['DELETE'])
 # def deleteVideo(id):
 #     print(f"Received delete http request for id={id}")

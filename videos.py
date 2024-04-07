@@ -28,20 +28,20 @@ def create_videos(file, metadata):
     cur.close()
     return newVideo
 
-# def update_videos(bioObj, id):
-#     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-#     # create query
-#     listOfStrings = [f'{key}' + '=' + '%s' for key in bioObj.keys()]
-#     data = ', '.join(listOfStrings)
-#     sqlQuery = 'UPDATE bios SET {input} WHERE id=%s RETURNING *'.format(input=data)
-#     # values
-#     listOfValues = [val for val in bioObj.values()]
-#     listOfValues.append(id)
-#     cur.execute(sqlQuery, tuple(listOfValues))
-#     updatedBio = cur.fetchone()
-#     db.conn.commit()
-#     cur.close()
-#     return updatedBio
+def update_videos(videoObj, id):
+    cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    # create query
+    listOfStrings = [f'{key}' + '=' + '%s' for key in videoObj.keys()]
+    data = ', '.join(listOfStrings)
+    sqlQuery = 'UPDATE videos SET {input} WHERE id=%s RETURNING *'.format(input=data)
+    # values
+    listOfValues = [val for val in videoObj.values()]
+    listOfValues.append(id)
+    cur.execute(sqlQuery, tuple(listOfValues))
+    updatedBio = cur.fetchone()
+    db.conn.commit()
+    cur.close()
+    return updatedBio
 
 
 def delete_video(id):
