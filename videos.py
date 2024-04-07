@@ -11,9 +11,15 @@ def get_videos():
     return allVideos
 
 def create_videos(file, metadata):
-    print("Attempting to create new vidoe", file)
+    print("Attempting to create new video", file)
     s3_client = boto3.client('s3')
-    s3_client.put_object(Body=file, Bucket='estilocalico-bucket', Key=metadata["file_name"])
+    # s3_client.put_object(Body=file, Bucket='estilocalico-bucket', Key=metadata["file_name"])
+    url = s3_client.generate_presigned_url(
+        ClientMethod = 'put_object',
+        Params={'Bucket': 'estilocalico-bucket', 'Key':"videos/" + metadata["file_name"]},
+        ExpiresIn=3600
+    )
+    print(url)
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     cur.execute('INSERT INTO videos (videos_name, description, pointer)' 
                 'VALUES (%s, %s, %s)'
@@ -23,6 +29,7 @@ def create_videos(file, metadata):
                 metadata["file_name"]
                 ))
     newVideo = cur.fetchone()
+    newVideo['upload_url'] = url
     print('New video created', newVideo)
     db.conn.commit()
     cur.close()

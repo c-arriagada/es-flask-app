@@ -69,7 +69,7 @@ resource "aws_lambda_function" "estilo_calico_lambda" {
   role          = aws_iam_role.iam_for_lambda.arn
   handler       = "app.lambda_handler"
   timeout       = 15
-  memory_size   = 512
+  memory_size   = 2048
 
   source_code_hash = filebase64sha256("./estilo_calico_backend.zip")
   depends_on       = [data.archive_file.estilo_calico_flask_app]
