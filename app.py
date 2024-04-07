@@ -4,6 +4,9 @@ from flask import request
 from flask_cors import CORS
 import events
 import bios
+import boto3
+import logging
+from botocore.exceptions import ClientError
 
 app = Flask(__name__)
 CORS(app)
@@ -84,6 +87,21 @@ def deleteBio(id):
         return "Success", 204
     else:
         return "Not found", 404
+
+@app.route("/upload", methods=['POST'])
+def upload():
+    file = request.files
+    print(file["file"])
+    s3_client = boto3.client('s3')
+    # bucket = s3_client.list_objects_v2(Bucket='estilocalico-bucket')
+    # s3_files = []
+    # for obj in bucket['Contents']:
+    #     s3_files.append(obj["Key"])
+    # return {"s3 files": s3_files}
+    print(request.form)
+    s3_client.put_object(Body=file["file"], Bucket='estilocalico-bucket', Key=request.form["file_name"])
+    return "Success", 200
+
 
 def lambda_handler(event, context):
     return awsgi.response(app, event, context)

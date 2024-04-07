@@ -10,3 +10,7 @@ jobs:
         with:
           python-version: '3.9'
       - run: pip3 install -r requirements.txt
+    # download postman to github actions
+    # set up secret for postman_key
+    # start server before running tests
+    # run integration tests script

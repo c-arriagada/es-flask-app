@@ -16,6 +16,34 @@ resource "aws_iam_role" "iam_for_lambda" {
   assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
+resource "aws_iam_policy" "lambda_s3_access" {
+  name        = "lambda_s3_access_policy"
+  description = "IAM policy for allowing Lambda to access S3 bucket"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = [
+          "s3:ListBucket",
+          "s3:GetObject",
+          "s3:PutObject",
+        ]
+        Effect   = "Allow"
+        Resource = [
+          "arn:aws:s3:::estilocalico-bucket*",
+        ]
+      },
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_s3_access_attachment" {
+  role       = aws_iam_role.iam_for_lambda.name
+  policy_arn = aws_iam_policy.lambda_s3_access.arn
+}
+
+
 data "archive_file" "estilo_calico_flask_app" {
   type        = "zip"
   output_path = "estilo_calico_backend.zip"
