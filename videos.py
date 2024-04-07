@@ -10,8 +10,8 @@ def get_videos():
     cur.close()
     return allVideos
 
-def create_videos(file, metadata):
-    print("Attempting to create new video", file)
+def create_videos(metadata):
+    print("Attempting to create new video")
     s3_client = boto3.client('s3')
     # s3_client.put_object(Body=file, Bucket='estilocalico-bucket', Key=metadata["file_name"])
     url = s3_client.generate_presigned_url(

@@ -95,9 +95,8 @@ def getVideos():
 
 @app.route("/videos", methods=['POST'])
 def createVideo():
-    file = request.files["file"]
-    metadata = request.form
-    result = videos.create_videos(file, metadata)
+    metadata = request.json
+    result = videos.create_videos(metadata)
     return result
 
 @app.route("/videos/<id>", methods=['PATCH'])
