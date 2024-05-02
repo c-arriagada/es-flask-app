@@ -1,5 +1,6 @@
 import db
 import psycopg2.extras
+import boto3
 
 def get_bios():
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -19,19 +20,29 @@ def get_bio(id):
 
 def create_bio(bioObj):
     print(bioObj)
+    print("Attempting to create new bio")
+    s3_client = boto3.client('s3')
+    url = s3_client.generate_presigned_url(
+        ClientMethod = 'put_object',
+        Params={'Bucket': 'estilocalico-bucket', 'Key': "photos/" + bioObj["img_pointer"]},
+        ExpiresIn=3600
+    )
+    print(url)
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    cur.execute('INSERT INTO bios (first_name,last_name, bio, bio_img)' 
+    cur.execute('INSERT INTO bios (first_name, last_name, bio, img_pointer)' 
                 'VALUES (%s, %s, %s, %s)'
                 'RETURNING *', 
                 (bioObj["first_name"],
                 bioObj["last_name"],
                 bioObj["bio"],
-                bioObj["bio_img"]
+                bioObj["img_pointer"]
                 ))
     # This was blowing up with an exception: "psycopg2.ProgrammingError: no results to fetch"
     # because I didn't have a 'RETURNING *' statement - so the db insert didn't
     # actually return any results you could fetch
     newBio = cur.fetchone()
+    newBio['upload_url'] = url
+    print('New bio created', newBio)
     db.conn.commit()
     cur.close()
     return newBio
@@ -49,6 +60,18 @@ def update_bio(bioObj, id):
     updatedBio = cur.fetchone()
     db.conn.commit()
     cur.close()
+    # check if "img_pointer" is one of the properties being updated
+    if "img_pointer" in list(bioObj):
+        s3_client = boto3.client('s3')
+        url = s3_client.generate_presigned_url(
+            ClientMethod = 'put_object',
+            Params={'Bucket': 'estilocalico-bucket', 'Key': "photos/" + bioObj["img_pointer"]},
+            ExpiresIn=3600
+        )
+        print(url)
+        updatedBio["upload_url"] = url
+        print("Bio updated", updatedBio)
+    
     return updatedBio
 
 

@@ -27,6 +27,8 @@ cur.execute('CREATE TABLE IF NOT EXISTS bios (id serial PRIMARY KEY,'
                                         'bio_img text);'
                                         )
 
+cur.execute('ALTER TABLE bios ADD img_pointer text;')
+
 cur.execute('CREATE TABLE IF NOT EXISTS videos (id serial PRIMARY KEY,'
                                         'videos_name varchar NOT NULL,'
                                         'description varchar NOT NULL,'
