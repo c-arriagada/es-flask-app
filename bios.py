@@ -49,6 +49,9 @@ def create_bio(bioObj):
 
 def update_bio(bioObj, id):
     cur = db.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    cur.execute('SELECT * FROM bios WHERE id=%s', (id,))
+    orginalBio = cur.fetchone()
     # create query
     listOfStrings = [f'{key}' + '=' + '%s' for key in bioObj.keys()]
     data = ', '.join(listOfStrings)
@@ -60,15 +63,15 @@ def update_bio(bioObj, id):
     updatedBio = cur.fetchone()
     db.conn.commit()
     cur.close()
-    # check if "img_pointer" is one of the properties being updated
-    if "img_pointer" in list(bioObj):
+    # check if the value of "img_pointer" changed, if yes, generate a presigned url
+    if orginalBio["img_pointer"] != updatedBio["img_pointer"]:
         s3_client = boto3.client('s3')
         url = s3_client.generate_presigned_url(
             ClientMethod = 'put_object',
             Params={'Bucket': 'estilocalico-bucket', 'Key': "photos/" + bioObj["img_pointer"]},
             ExpiresIn=3600
         )
-        print(url)
+        # print(url)
         updatedBio["upload_url"] = url
         print("Bio updated", updatedBio)
     
