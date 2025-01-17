@@ -29,6 +29,8 @@ cur.execute('CREATE TABLE IF NOT EXISTS bios (id serial PRIMARY KEY,'
 
 cur.execute('ALTER TABLE bios ADD img_pointer text;')
 
+# Dropped bio_img column from bios table after adding the img_pointer column
+
 cur.execute('CREATE TABLE IF NOT EXISTS videos (id serial PRIMARY KEY,'
                                         'videos_name varchar NOT NULL,'
                                         'description varchar NOT NULL,'
