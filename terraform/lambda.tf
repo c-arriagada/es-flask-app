@@ -61,6 +61,11 @@ data "archive_file" "estilo_calico_flask_app" {
   }
 }
 
+locals {
+    db = jsondecode(aws_secretsmanager_secret_version.estilo-calico.secret_string)
+}
+
+
 resource "aws_lambda_function" "estilo_calico_lambda" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
@@ -80,11 +85,11 @@ resource "aws_lambda_function" "estilo_calico_lambda" {
 
   environment {
     variables = {
-      DB_URI      = "postgres://dygltzkk:xqtNJSqVix9ds-0kv97UYDo-5Iif9CsH@hansken.db.elephantsql.com/dygltzkk"
-      DB_USER     = jsondecode(data.aws_secretsmanager_secret_version.secret-version.secret_string)["DB_USER"]
-      DB_PASSWORD = jsondecode(data.aws_secretsmanager_secret_version.secret-version.secret_string)["DB_PASSWORD"]
-      DB_HOST     = "hansken.db.elephantsql.com"
+      DB_USER     = local.db.username
+      DB_PASSWORD = local.db.password
+      DB_HOST     = split(":",aws_db_instance.estilo_calico.endpoint)[0]
       DB_PORT     = "5432"
+      DB_NAME     = aws_db_instance.estilo_calico.db_name
     }
   }
   lifecycle {
@@ -99,13 +104,7 @@ resource "aws_lambda_layer_version" "deps-layer" {
   compatible_runtimes = ["python3.9"]
 }
 
-resource "aws_secretsmanager_secret" "estilo_calico_admin" {
-  name = "estilo_calico_admin"
-}
 
-data "aws_secretsmanager_secret_version" "secret-version" {
-  secret_id = aws_secretsmanager_secret.estilo_calico_admin.id
-}
 
 
 
