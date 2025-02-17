@@ -11,23 +11,21 @@ cur.execute('CREATE TABLE IF NOT EXISTS events (id serial PRIMARY KEY,'
                                 'address varchar NOT NULL);'
                                 )
 
-cur.execute('INSERT INTO events (title, start_date, start_time, venue, address)'
-            'VALUES (%s, %s, %s, %s, %s)',
-            ('Concert',
-            '2024-01-05T18:00:00Z',
-            '2024-01-05T18:00:00Z',
-            'Cool venue',
-            '0000 Cool Street'
-            ))
+# cur.execute('INSERT INTO events (title, start_date, start_time, venue, address)'
+#             'VALUES (%s, %s, %s, %s, %s)',
+#             ('Concert',
+#             '2024-01-05T18:00:00Z',
+#             '2024-01-05T18:00:00Z',
+#             'Cool venue',
+#             '0000 Cool Street'
+#             ))
 
 cur.execute('CREATE TABLE IF NOT EXISTS bios (id serial PRIMARY KEY,'
                                         'first_name varchar NOT NULL,'
                                         'last_name varchar NOT NULL,'
                                         'bio varchar NOT NULL,'
-                                        'bio_img text);'
+                                        'img_pointer text);'
                                         )
-
-cur.execute('ALTER TABLE bios ADD img_pointer text;')
 
 # Dropped bio_img column from bios table after adding the img_pointer column
 
