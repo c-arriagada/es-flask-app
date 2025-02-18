@@ -9,5 +9,6 @@ conn = psycopg2.connect(
     password=os.getenv('DB_PASSWORD'),
     host=os.getenv('DB_HOST'),
     port=os.getenv('DB_PORT'),
-    database=os.getenv('DB_NAME')
+    database=os.getenv('DB_NAME'),
+    sslmode="require" # rds postgres requires ssl
 )
