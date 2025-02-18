@@ -79,7 +79,7 @@ resource "aws_lambda_function" "estilo_calico_lambda" {
   source_code_hash = filebase64sha256("./estilo_calico_backend.zip")
   depends_on       = [data.archive_file.estilo_calico_flask_app]
 
-  runtime = "python3.9"
+  runtime = "python3.8"
 
   layers = [aws_lambda_layer_version.deps-layer.arn]
 
@@ -101,7 +101,7 @@ resource "aws_lambda_layer_version" "deps-layer" {
   filename            = "../estilo-calico-deps-layer.zip"
   layer_name          = "estilo-calico-deps"
   source_code_hash    = filebase64sha256("../estilo-calico-deps-layer.zip")
-  compatible_runtimes = ["python3.9"]
+  compatible_runtimes = ["python3.8"]
 }
 
 

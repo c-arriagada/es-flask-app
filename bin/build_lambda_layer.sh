@@ -11,7 +11,7 @@ tmp="$(mktemp)"
 echo "Creating temporary folder: $tmp"
 echo "Creating temporary 'es-flask-app/python' directory where all Python deps will be placed."
 
-gtar cf "$tmp" -C "$SCRIPT_DIR/../.venv/lib/python3.9/site-packages" --transform "s|^|python/|" "."
+gtar cf "$tmp" -C "$SCRIPT_DIR/../.venv/lib/python3.8/site-packages" --transform "s|^|python/|" "."
 gtar xf "$tmp"
 
 ## BEFORE YOU ZIP THIS FILE AND UPLOAD TO AWS
@@ -26,7 +26,7 @@ gtar xf "$tmp"
 # psycopg binaries before we push to AWS.
 echo "Removing psycopg2 binary and replacing with AWS-compatible psycopg2"
 rm -r "$SCRIPT_DIR/../python/psycopg2"
-cp -r ~/code/awslambda-psycopg2/psycopg2-3.9 "$SCRIPT_DIR/../python/psycopg2/"
+cp -r ~/code/awslambda-psycopg2/with_ssl_support/psycopg2-3.8 "$SCRIPT_DIR/../python/psycopg2/"
 
 echo "Zipping python folder to create lambda layer archive"
 zip -rq "$SCRIPT_DIR/../estilo-calico-deps-layer.zip" "python"
